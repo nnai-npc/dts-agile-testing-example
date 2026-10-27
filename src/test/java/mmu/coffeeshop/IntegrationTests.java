@@ -32,6 +32,22 @@ public class IntegrationTests {
         Assert.assertEquals("Tea", basket.getItems().get(0).getName());
     }
 
+    // Reproduces #1: basket total is not reduced when an item is removed (expected to fail until fixed)
+    @Test
+    public void WhenRemoveItemThenBasketTotalIsUpdated() {
+        Basket basket = new Basket();
+        Menu mainMenu = new MainMenu(basket, new NullTextDisplay());
+        Menu addItemMenu = mainMenu.chooseOption(1);
+        mainMenu = addItemMenu.chooseOption(1);         // Coffee
+        addItemMenu = mainMenu.chooseOption(1);
+        mainMenu = addItemMenu.chooseOption(2);         // Tea
+        Menu removeItemMenu = mainMenu.chooseOption(2);
+        mainMenu = removeItemMenu.chooseOption(1);      // Remove coffee
+
+        // Only the tea should remain, so the total should be the tea's price
+        Assert.assertEquals(basket.getItems().get(0).getPrice(), basket.getTotalPrice());
+    }
+
     @Test
     public void WhenOrderIsCompletedThenBasketIsEmpty() {
         Basket basket = new Basket();
